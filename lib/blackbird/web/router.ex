@@ -1,6 +1,8 @@
 defmodule Blackbird.Web.Router do
   use Blackbird.Web, :router
 
+  alias Blackbird.Web.TweetsController
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -11,6 +13,8 @@ defmodule Blackbird.Web.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    get "/tweets", TweetsController, :search
   end
 
   scope "/", Blackbird.Web do

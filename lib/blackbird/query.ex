@@ -2,14 +2,14 @@ defmodule Blackbird.Query do
 
   alias Blackbird.Query.{Sentiment, Twitter}
 
-  def perform(term) do
-    term
-    |> Twitter.search
-    |> Sentiment.analyse
-    |> build_response
+  def perform(query = %{}) do
+    with {:ok, query}   <- validate(query),
+         {:ok, tweets}  <- Twitter.search(query),
+         {:ok, results} <- Sentiment.analyse(tweets),
+         do: {:ok, results}
   end
 
-  defp build_response(_results) do
-
+  defp validate(query) do
+    {:ok, query}
   end
 end
