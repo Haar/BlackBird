@@ -7,7 +7,7 @@ defmodule Blackbird.Query.Sentiment do
 
   def analyse(tweets) when is_list(tweets) do
     tweets
-    |> Enum.map(&Task.async(Blackbird.Query.Sentiment, :analyse, [&1]))
+    |> Enum.map(&Task.async(__MODULE__, :analyse, [&1]))
     |> Enum.map(&Task.await(&1))
     |> present_results
   end
@@ -15,12 +15,11 @@ defmodule Blackbird.Query.Sentiment do
   def analyse(tweet = %Tweet{text: text}) do
     with {:ok, response} <- HTTPoison.post(@endpoint, "text=#{text}"),
          {:ok, parsed}   <- Poison.decode(response.body),
-         {:ok, label}    <- Map.fetch(parsed, "label"),
-         sentiment       <- map_sentiment(label)
+         {:ok, label}    <- Map.fetch(parsed, "label")
     do
       %Result{
         text: text, created_at: tweet.created_at, real_name: tweet.user.name,
-        twitter_name: tweet.user.screen_name, sentiment: sentiment,
+        twitter_name: tweet.user.screen_name, sentiment: map_sentiment(label),
       }
     end
   end
@@ -30,7 +29,7 @@ defmodule Blackbird.Query.Sentiment do
   defp map_sentiment("neutral"), do: "NEUTRAL"
   defp map_sentiment(_),         do: "¯\_(ツ)_/¯"
 
-  defp present_results(results) do
-    {:ok, results}
+  defp present_results(result) do
+    {:ok, result}
   end
 end

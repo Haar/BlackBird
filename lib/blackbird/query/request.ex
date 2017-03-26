@@ -12,9 +12,9 @@ defmodule Blackbird.Query.Request do
     |> generate_struct
   end
 
-  def validate_required(model) do
+  def validate_required(params) do
     errors = Enum.reduce(@required_params, %{}, fn (param, acc) ->
-      case Map.fetch(model, param) do
+      case Map.fetch(params, param) do
         {:ok, nil} ->
           existing_errors = Map.get(acc, param) || []
           Map.put(acc, param, existing_errors ++ ["is a required parameter"])
@@ -24,7 +24,7 @@ defmodule Blackbird.Query.Request do
         {:ok, _result} -> acc
       end
     end)
-    Map.put(model, :errors, errors)
+    Map.put(params, :errors, errors)
   end
 
   def generate_struct(%{errors: errors}) when map_size(errors) > 0 do

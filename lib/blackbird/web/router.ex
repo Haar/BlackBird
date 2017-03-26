@@ -17,12 +17,6 @@ defmodule Blackbird.Web.Router do
     get "/tweets", TweetsController, :search
   end
 
-  scope "/", Blackbird.Web do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", Blackbird.Web do
   #   pipe_through :api
