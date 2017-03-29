@@ -8,6 +8,7 @@ defmodule Blackbird.Mixfile do
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      start_permanent: Mix.env == :prod,
+     preferred_cli_env: [espec: :test],
      deps: deps()]
   end
 
@@ -36,6 +37,8 @@ defmodule Blackbird.Mixfile do
       {:cowboy, "~> 1.0"},
       {:httpoison, "~> 0.11"},
       {:extwitter, "~> 0.8"},
+      {:espec, "~> 1.3", only: :test},
+      {:espec_phoenix, "~> 0.6", only: :test},
     ]
   end
 end
