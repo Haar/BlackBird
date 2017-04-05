@@ -39,6 +39,8 @@ defmodule Blackbird.Mixfile do
       {:extwitter, "~> 0.8"},
       {:espec, "~> 1.3", only: :test},
       {:espec_phoenix, "~> 0.6", only: :test},
+      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
+      {:bypass, git: "git://github.com/sky-uk/bypass.git", only: :test},
     ]
   end
 end
