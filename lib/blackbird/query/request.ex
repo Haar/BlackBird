@@ -35,12 +35,12 @@ defmodule Blackbird.Query.Request do
   end
 
   defp put_error(request, param, error_message) do
-    Map.update(request, :errors, %{}, fn (errors) ->
+    Map.update!(request, :errors, fn (errors) ->
       Map.update(errors, param, [error_message], &(&1 ++ [error_message]))
     end)
   end
 
-  defp generate_struct(%{"query" => term, "resultType" => result_type, errors: errors}) when errors == %{} do
+  defp generate_struct(%{"query" => term, "resultType" => result_type, errors: errors}) when map_size(errors) == 0 do
     {:ok, %Request{term: term, result_type: result_type}}
   end
 

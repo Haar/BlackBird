@@ -1,5 +1,5 @@
 defmodule Blackbird.Query.RequestSpec do
-  use ESpec
+  use ESpec, async: true
 
   alias Blackbird.Query.Request
 

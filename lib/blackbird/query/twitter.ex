@@ -3,8 +3,8 @@ defmodule Blackbird.Query.Twitter do
     try do
       {:ok, ExTwitter.search(term, [count: 5, result_type: result_type])}
     rescue
-      e in ExTwitter.Error -> {:error, :twitter, e.message}
-      e -> {:error, :generic, e.message}
+      e in ExTwitter.Error -> {:error, :twitter, e}
+      e -> {:error, :generic, e}
     end
   end
 end
