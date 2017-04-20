@@ -2,10 +2,10 @@ defmodule Blackbird.Web.TweetsView do
   use Blackbird.Web, :view
 
   def render("results.json", %{results: results}) do
-    Enum.map(results, &present_tweet/1)
+    render_many(results, __MODULE__, "result.json", as: :result)
   end
 
-  def present_tweet(result) do
+  def render("result.json", %{result: result}) do
     %{
       createdAt: result.created_at,
       text: result.text,

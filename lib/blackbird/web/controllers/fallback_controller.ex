@@ -1,6 +1,8 @@
 defmodule Blackbird.Web.FallbackController do
   use Blackbird.Web, :controller
 
+  require Logger
+
   def call(conn, {:error, :validation, errors}) do
     conn
     |> put_status(400)
@@ -9,15 +11,13 @@ defmodule Blackbird.Web.FallbackController do
 
   def call(conn, {:error, scope, message}) do
     conn
-    |> put_status(500)
     |> log(scope, message)
+    |> put_status(500)
     |> json(%{error: "An error has occurred."})
   end
 
   defp log(conn, scope, message) do
-    IO.puts("status: #{conn.status}")
-    IO.puts("scope: #{scope}")
-    IO.puts("message: #{message}")
+    Logger.warn("An error occurred! Scope: #{scope} - #{message}")
 
     conn
   end

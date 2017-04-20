@@ -3,18 +3,19 @@ defmodule Blackbird.Web.Router do
 
   alias Blackbird.Web.TweetsController
 
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
+  # pipeline :browser do
+  #   plug :accepts, ["html"]
+  #   plug :fetch_session
+  #   plug :fetch_flash
+  #   plug :protect_from_forgery
+  #   plug :put_secure_browser_headers
+  # end
 
   pipeline :api do
     plug :accepts, ["json"]
 
     get "/tweets", TweetsController, :search
+    # post "/foo", FoosController, :foo
   end
 
   # Other scopes may use custom stacks.

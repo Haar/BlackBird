@@ -27,8 +27,8 @@ defmodule Blackbird.Query.Request do
     end)
   end
 
-  defp validate_result_type(params = %{"resultType" => result_type}) do
-    case Enum.member?(@permitted_result_types, result_type) do
+  defp validate_result_type(params) do
+    case Enum.member?(@permitted_result_types, params["resultType"]) do
       true  -> params
       false -> put_error(params, "resultType", "must be either 'recent' or 'popular'")
     end

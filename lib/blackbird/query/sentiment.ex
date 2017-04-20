@@ -14,17 +14,19 @@ defmodule Blackbird.Query.Sentiment do
     |> present_result
   end
 
-  def analyse(tweet = %Tweet{text: text}, url) do
-    with {:ok, %HTTPoison.Response{status_code: 200} = response} <- HTTPoison.post(url, "text=#{text}"),
-         {:ok, parsed}                                           <- Poison.decode(response.body),
-         {:ok, label}                                            <- Map.fetch(parsed, "label")
+  def analyse(%Tweet{text: text} = tweet, url) do
+    request = %HTTP.Request{url: url, body: "text=#{text}"}
+
+    with {:ok, %HTTP.Response{status_code: 200} = response} <- HTTP.post(:sentiment, request),
+         {:ok, label}                                       <- Map.fetch(response.body, "label")
     do
       %Result{
         text: text, created_at: tweet.created_at, real_name: tweet.user.name,
         twitter_name: tweet.user.screen_name, sentiment: map_sentiment(label),
       }
     else
-      result -> {:error, %{tweet: tweet, error: result}}
+      {:ok, %{status_code: 429}} -> build_error(tweet, :rate_limited)
+      result                     -> build_error(tweet, result)
     end
   end
 
@@ -35,7 +37,7 @@ defmodule Blackbird.Query.Sentiment do
 
   defp present_result(results) when is_list(results) do
     results
-    |> Enum.map(__MODULE__, :present_result)
+    |> Enum.map(&present_result/1)
     |> Enum.filter(&(&1))
     |> (&{:ok, &1}).()
   end
@@ -45,4 +47,6 @@ defmodule Blackbird.Query.Sentiment do
     # log result
     nil
   end
+
+  defp build_error(tweet, error), do: {:error, :sentiment, %{tweet: tweet, error: error}}
 end
