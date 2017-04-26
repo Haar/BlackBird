@@ -36,8 +36,7 @@ defmodule Blackbird.Query.SentimentSpec do
 
         it "returns an :error response" do
           expect(result())
-          |> to(eq {:error, :sentiment, %{tweet: tweet(), error: %{"errors" =>
-            [%{"message" => "Rate limit exceeded"}]}}})
+          |> to(eq {:error, :sentiment, %{tweet: tweet(), error: :rate_limited}})
         end
       end
 
