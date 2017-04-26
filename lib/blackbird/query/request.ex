@@ -9,13 +9,10 @@ defmodule Blackbird.Query.Request do
 
   def build(params) do
     params
-    |> with_zero_errors
     |> validate_required
     |> validate_result_type
     |> generate_struct
   end
-
-  defp with_zero_errors(params), do: Map.put(params, :errors, %{})
 
   defp validate_required(params) do
     Enum.reduce(@required_params, params, fn (param, acc) ->
@@ -35,16 +32,18 @@ defmodule Blackbird.Query.Request do
   end
 
   defp put_error(request, param, error_message) do
-    Map.update!(request, :errors, fn (errors) ->
-      Map.update(errors, param, [error_message], &(&1 ++ [error_message]))
-    end)
-  end
+    errors = request
+             |> Map.get(:errors, %{})
+             |> Map.update(param, [error_message], &(&1 ++ [error_message]))
 
-  defp generate_struct(%{"query" => term, "resultType" => result_type, errors: errors}) when map_size(errors) == 0 do
-    {:ok, %Request{term: term, result_type: result_type}}
+    Map.put(request, :errors, errors)
   end
 
   defp generate_struct(%{errors: errors}) do
     {:error, :validation, errors}
+  end
+
+  defp generate_struct(%{"query" => term, "resultType" => result_type}) do
+    {:ok, %Request{term: term, result_type: result_type}}
   end
 end
